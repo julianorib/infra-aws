@@ -1,0 +1,53 @@
+---
+  - name: Baixar as imagens do Kubernetes
+    ansible.builtin.shell: sudo kubeadm config images pull
+
+  - name: Inicializar o Cluster
+    ansible.builtin.shell: kubeadm init --ignore-preflight-errors=NumCPU --control-plane-endpoint "{{ controlplaneendpoint }}:6443" --upload-certs --apiserver-cert-extra-sans={{ ansible_host}} --pod-network-cidr={{ podnetworkcidr }}
+    register: token
+
+  - name: Tratar o Token CP
+    ansible.builtin.shell: echo "{{ token.stdout_lines[-12] | regex_replace('\t') }} {{ token.stdout_lines[-11] | regex_replace('\t') }} {{ token.stdout_lines[-10] | regex_replace('\t')  }} " | tr -d "'\\\'"
+    register: tokencp
+
+  - name: Tratar o token Worker
+    ansible.builtin.shell: echo "{{ token.stdout_lines[-2] | regex_replace('\t') }}{{ token.stdout_lines[-1] | regex_replace('\t')}}" | tr -d "'\\\'"
+    register: tokenw
+
+  - name: Exportar JOIN para CP
+    ansible.builtin.add_host:
+      name: tempcp
+      join_clustercp: "{{ tokencp.stdout_lines[0] }}"  
+ 
+  - name: Exportar JOIN para Nodes
+    ansible.builtin.add_host:
+      name: temp
+      join_cluster: "{{ tokenw.stdout_lines[0] }}"
+
+  - name: Kubeconfig para o usuario root
+    ansible.builtin.shell: |
+      mkdir -p /root/.kube
+      cp /etc/kubernetes/admin.conf /root/.kube/config  
+
+  - name: Copiar manifesto flannel CNI cluster network interface
+    ansible.builtin.copy:
+      src: flannel.yaml
+      dest: /tmp/flannel.yaml
+
+  - name: Configurar Network CIDR utilizado no Cluster para o manifesto Flannel
+    ansible.builtin.lineinfile:
+      state: present
+      dest: /tmp/flannel.yaml
+      regex: '      "Network": "10.244.0.0/16",'
+      line: '      "Network": "{{ podnetworkcidr }}",'
+
+  - name: Aplicação do manifesto Flannel
+    ansible.builtin.shell: kubectl apply -f /tmp/flannel.yaml
+
+  - name: Visualizar Kubeconfig remoto
+    ansible.builtin.shell: cat /etc/kubernetes/admin.conf
+    register: kubeconfig
+
+  - name: Copiar Kubeconfig para localhost
+    ansible.builtin.shell: echo "{{ kubeconfig.stdout }}" > ./config
+    delegate_to: localhost
