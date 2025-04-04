@@ -112,7 +112,7 @@ resource "aws_instance" "virtual_machine" {
   instance_type   = var.instance_type
   key_name        = aws_key_pair.ssh_key.key_name
   subnet_id       = aws_subnet.subnet_public[count.index].id
-  security_groups = [aws_security_group.acesso-out-internet.id, aws_security_group.acesso-in-ssh.id]
+  security_groups = [aws_security_group.acesso-out-internet.id, aws_security_group.acesso-in-all.id]
   count           = var.qtdevm
 
   tags = merge({
@@ -144,16 +144,16 @@ resource "aws_security_group" "acesso-out-internet" {
 
 }
 
-resource "aws_security_group" "acesso-in-ssh" {
-  name        = "acesso-in-ssh"
-  description = "permite acesso in ssh"
+resource "aws_security_group" "acesso-in-all" {
+  name        = "acesso-in-all"
+  description = "permite acesso in all"
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
-    description = "SSH 22"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
+    description = "all"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
