@@ -1,6 +1,6 @@
 locals {
   common_tags = {
-    projeto  = var.Name
+    projeto  = var.project_name
     ambiente = var.tag-ambiente
     dono     = var.tag-dono
     ccusto   = var.tag-ccusto

@@ -1,3 +1,0 @@
-controlplaneendpoint: localhost.localdomain
-podnetworkcidr: 10.244.0.0/16
-rangeips: 172.19.255.200-172.19.255.250 
