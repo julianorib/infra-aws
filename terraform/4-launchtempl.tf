@@ -10,6 +10,9 @@ resource "aws_launch_template" "main" {
     aws_security_group.acesso-in-http.id,
     aws_security_group.acesso-in-https.id
   ]
+  iam_instance_profile {
+    name = aws_iam_instance_profile.ec2-s3-profile.name
+  }
   key_name = aws_key_pair.main.key_name
   tag_specifications {
     resource_type = "instance"

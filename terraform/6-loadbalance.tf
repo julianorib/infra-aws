@@ -1,5 +1,6 @@
 ## Criar o Loadbalancer para o Autoscaling Group
 resource "aws_lb" "asglb" {
+  name = var.project_name
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.asglb.id]

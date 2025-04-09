@@ -7,9 +7,9 @@ resource "aws_autoscaling_group" "main" {
     aws_subnet.private-1c.id
   ]
 
-  desired_capacity = 2
-  max_size         = 5
-  min_size         = 1
+  desired_capacity = var.asg_desired_capacity
+  max_size         = var.asg_max_capacity
+  min_size         = var.asg_min_capacity
 
   launch_template {
     id      = aws_launch_template.main.id

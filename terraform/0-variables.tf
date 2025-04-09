@@ -34,3 +34,22 @@ variable "region" {
   default     = "us-east-2"
 }
 
+variable "asg_desired_capacity" {
+  type = number
+  description = "Capacidade desejada"
+}
+
+variable "asg_min_capacity" {
+  type = number
+  description = "Capacidade minima"
+}
+
+variable "asg_max_capacity" {
+  type = number
+  description = "Capacidade maxima"
+}
+
+variable "bucket_name" {
+  type = string
+  description = "Nome do Bucket"
+}
