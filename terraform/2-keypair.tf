@@ -1,4 +1,7 @@
+## Criar uma Key Pair
 resource "aws_key_pair" "main" {
-  key_name   = var.tag-dono
-  public_key = file("/home/julianorib/.ssh/id_rsa.pub")
+  key_name   = "main"
+  public_key = file("id_rsa.pub")
+
+  tags = merge({ Name = format("%s-sshkey", var.project_name) }, local.common_tags)
 }

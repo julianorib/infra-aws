@@ -8,6 +8,6 @@ resource "aws_s3_bucket" "main" {
 ## Envia um arquivo para o Bucket S3
 resource "aws_s3_object" "bike" {
   bucket = aws_s3_bucket.main.id
-  key    = "bike"
+  key    = "bike.jpg"
   source = "bike.jpg"
 }

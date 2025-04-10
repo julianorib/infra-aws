@@ -1,3 +1,5 @@
-output "dns" {
-  value = aws_lb.asglb.dns_name
+## Mostrar o IP Publico para acesso
+output "public_ip" {
+  value = aws_instance.linux.public_ip
 }
+
