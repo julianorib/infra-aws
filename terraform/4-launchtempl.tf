@@ -18,5 +18,5 @@ resource "aws_launch_template" "main" {
     resource_type = "instance"
     tags          = merge({ Name = format("%s-launch-template", var.project_name) }, local.common_tags)
   }
-  user_data = filebase64("${path.module}/nginx.sh")
+  user_data = filebase64("${path.module}/templates/user-data.tpl")
 }
